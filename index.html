@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian Sumatif IPS - SMPN 1 Karimun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hidden-screen { display: none !important; }
+        /* Animasi fade in */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- ================= LAYAR LOGIN ================= -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-slate-100 fade-in">
+        <div class="bg-white rounded-xl shadow-xl p-8 max-w-md w-full border-t-8 border-blue-600">
+            <div class="text-center mb-8">
+                <img src="https://i.ibb.co.com/TxwtMFDD/Screenshot-2024-08-29-125749.png" alt="Logo SMP Negeri 1 Karimun" class="w-24 h-auto mx-auto mb-4 drop-shadow-sm" />
+                <h1 class="text-2xl font-bold text-slate-800">SUMATIF AKHIR SEMESTER</h1>
+                <h2 class="text-sm font-semibold text-slate-600 mt-1">TAHUN PELAJARAN 2025/2026</h2>
+                <h3 class="text-lg font-bold text-blue-600 mt-2">SMP NEGERI 1 KARIMUN</h3>
+                <p class="text-slate-500 font-medium">Bidang Studi: Ilmu Pengetahuan Sosial</p>
+            </div>
+
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap Siswa</label>
+                    <input type="text" id="input-nama" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Masukkan nama lengkap..." required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Kelamin</label>
+                    <select id="input-jk" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" required>
+                        <option value="">-- Pilih Jenis Kelamin --</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Kelas</label>
+                    <select id="input-kelas" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="7.1">Kelas 7.1</option>
+                        <option value="7.2">Kelas 7.2</option>
+                        <option value="7.3">Kelas 7.3</option>
+                        <option value="7.4">Kelas 7.4</option>
+                        <option value="7.5">Kelas 7.5</option>
+                        <option value="7.6">Kelas 7.6</option>
+                        <option value="7.7">Kelas 7.7</option>
+                        <option value="7.8">Kelas 7.8</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Token Ujian</label>
+                    <input type="text" id="input-token" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none uppercase" placeholder="Masukkan Token (IPS2026)" required />
+                </div>
+
+                <div id="login-error" class="hidden-screen flex items-center gap-2 p-3 bg-red-50 text-red-700 text-sm rounded-lg">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p id="login-error-text"></p>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 mt-4 flex justify-center items-center gap-2 shadow-md">
+                    Mulai Ujian Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= LAYAR UJIAN ================= -->
+    <div id="exam-screen" class="hidden-screen min-h-screen flex flex-col md:flex-row">
+        
+        <!-- Panel Kiri (Soal) -->
+        <div class="flex-1 flex flex-col max-h-screen overflow-y-auto relative">
+            <!-- Header -->
+            <div class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+                <div class="flex items-center gap-4">
+                    <img src="https://i.ibb.co.com/TxwtMFDD/Screenshot-2024-08-29-125749.png" alt="Logo" class="w-10 h-10 object-contain hidden sm:block" />
+                    <div>
+                        <h2 class="font-bold text-lg text-slate-800">Ujian IPS - SMPN 1 Karimun</h2>
+                        <div class="flex items-center gap-2 text-sm text-slate-500 mt-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            <span id="header-student-info">Nama | Kelas</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="cheat-indicator" class="hidden-screen items-center gap-2 px-3 py-1.5 bg-red-100 text-red-700 rounded-full text-sm font-bold animate-pulse">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span id="cheat-count-text">Kecurangan: 0</span>
+                </div>
+            </div>
+
+            <!-- Area Soal -->
+            <div class="flex-1 p-6 md:p-10 max-w-4xl mx-auto w-full fade-in" id="question-container">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                        <span id="question-number" class="bg-blue-100 text-blue-800 font-bold px-4 py-1.5 rounded-full text-sm">Soal No. 1</span>
+                    </div>
+                    
+                    <p id="question-text" class="text-lg text-slate-800 leading-relaxed mb-4"></p>
+
+                    <div id="question-image-container" class="mb-8 flex justify-center hidden-screen">
+                        <img id="question-image" src="" alt="Ilustrasi Soal" class="max-w-full h-auto rounded-lg shadow-sm border border-slate-200" style="max-height: 400px;" />
+                    </div>
+
+                    <div id="options-container" class="space-y-3">
+                        <!-- Pilihan jawaban di-render via JS -->
+                    </div>
+                </div>
+
+                <!-- Navigasi Bawah -->
+                <div class="flex justify-between items-center mt-6">
+                    <button id="btn-prev" class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition bg-white border shadow-sm text-slate-700 hover:bg-slate-50">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg> Sebelumnya
+                    </button>
+                    
+                    <button id="btn-next" class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium bg-blue-600 text-white hover:bg-blue-700 shadow-md transition">
+                        Selanjutnya <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+
+                    <button id="btn-submit-exam" class="hidden-screen flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold bg-green-600 text-white hover:bg-green-700 shadow-md transition">
+                        <span id="btn-submit-text">Kirim Jawaban</span> 
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Kanan (Navigasi Nomor Soal) -->
+        <div class="w-full md:w-80 bg-white border-l shadow-xl flex flex-col z-20">
+            <div class="p-4 border-b bg-slate-50">
+                <h3 class="font-bold text-slate-800 text-center">Navigasi Soal</h3>
+                <div class="flex justify-center gap-4 mt-3 text-xs">
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 bg-blue-600 rounded-sm"></div> Dijawab</div>
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 border border-slate-300 rounded-sm"></div> Belum</div>
+                </div>
+            </div>
+            
+            <div class="flex-1 p-4 overflow-y-auto">
+                <div id="grid-navigation" class="grid grid-cols-5 gap-2">
+                    <!-- Tombol nomor di-render via JS -->
+                </div>
+            </div>
+
+            <div class="p-4 border-t bg-slate-50">
+                <button id="btn-finish-all" class="w-full py-3 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-900 transition flex items-center justify-center gap-2">
+                    Selesai & Kirim
+                </button>
+                <p id="submit-error" class="text-red-500 text-xs mt-2 text-center hidden-screen"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= LAYAR HASIL ================= -->
+    <div id="result-screen" class="hidden-screen min-h-screen flex items-center justify-center p-4 bg-slate-100 fade-in">
+        <div class="bg-white rounded-xl shadow-xl p-8 max-w-lg w-full text-center border-t-8 border-green-500">
+            <svg class="w-20 h-20 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">Ujian Selesai!</h1>
+            <p class="text-slate-600 mb-6">Terima kasih, <strong id="res-nama"></strong>. Jawaban Anda telah berhasil dikirim dan tersimpan di database.</p>
+            
+            <div class="bg-slate-50 rounded-lg p-4 mb-6 text-left border border-slate-200">
+                <h3 class="font-bold text-slate-700 border-b pb-2 mb-3">Ringkasan Hasil Anda</h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                    <li class="flex justify-between"><span>Total Soal:</span> <strong id="res-total"></strong></li>
+                    <!-- Jawaban Benar disembunyikan agar skor tidak bisa ditebak -->
+                    <li class="hidden flex justify-between"><span>Jawaban Benar:</span> <strong class="text-green-600" id="res-benar"></strong></li>
+                    <li class="flex justify-between text-red-600"><span>Pelanggaran (Pindah Layar):</span> <strong id="res-curang"></strong></li>
+                    <!-- Skor Akhir disembunyikan -->
+                    <li class="hidden flex justify-between text-lg font-bold mt-4 pt-2 border-t"><span>Skor Akhir:</span> <span class="text-blue-700" id="res-skor"></span></li>
+                </ul>
+            </div>
+            <p class="text-sm text-slate-500 italic">Silakan tutup layar ini atau melapor ke pengawas ujian.</p>
+        </div>
+    </div>
+
+    <!-- ================= MODAL KONFIRMASI KIRIM ================= -->
+    <div id="modal-confirm" class="hidden-screen fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Konfirmasi Pengiriman</h3>
+            <p id="modal-confirm-text" class="text-slate-600 mb-6"></p>
+            <div class="flex gap-3 justify-end">
+                <button id="btn-cancel-submit" class="px-5 py-2.5 rounded-lg font-medium bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Batal</button>
+                <button id="btn-execute-submit" class="px-5 py-2.5 rounded-lg font-medium bg-blue-600 text-white hover:bg-blue-700 transition">Ya, Kirim Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL PERINGATAN KECURANGAN ================= -->
+    <div id="modal-cheat" class="hidden-screen fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border-t-4 border-red-500 text-center">
+            <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Peringatan Kecurangan!</h3>
+            <p class="text-slate-600 mb-4">
+                Sistem mendeteksi Anda keluar dari layar ujian atau membuka tab lain. Poin Anda akan <strong>DIKURANGI 2 POIN</strong> untuk pelanggaran ini.
+            </p>
+            <p id="modal-cheat-count-text" class="text-red-600 font-bold mb-6 bg-red-50 py-2 rounded-lg"></p>
+            <button id="btn-understand-cheat" class="w-full py-3 rounded-lg font-bold bg-red-600 text-white hover:bg-red-700 transition">Saya Mengerti</button>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // --- DATA SOAL ---
+        const QUESTIONS = [
+            { id: 1, text: "Semua kekayaan yang berasal dari alam atau bumi baik benda hidup maupun benda mati yang dapat dimanfaatkan untuk memenuhi kebutuhan hidup manusia merupakan pengertian dari …..", options: ["A. Sumber daya alam", "B. Kekayaan alam", "C. Sumber daya manusia", "D. Hasil alam"], correctAnswer: 0 },
+            { id: 2, text: "Sumber daya alam yang akan habis karena tidak dapat digantikan dengan yang lain disebut …..", options: ["A. Sumber daya alam yang dapat diperbarui", "B. Sumber daya alam yang tidak dapat diperbarui", "C. Sumber daya alam organik", "D. Sumber daya alam anorganik"], correctAnswer: 1 },
+            { id: 3, text: "Berikut ini contoh-contoh dari sumber daya alam yang tidak dapat diperbarui adalah …..", options: ["A. Udara, sinar matahari, angin", "B. Batu bara, emas, udara", "C. Tembaga, minyak bumi, sinar matahari", "D. Batu bara, bauksit, minyak bumi"], correctAnswer: 3 },
+            { id: 4, text: "Kawasan hutan yang dimanfaatkan untuk menghasilkan bahan baku produksi disebut …..", options: ["A. Hutan produksi", "B. Hutan lindung", "C. Hutan konservasi", "D. Hutan musim"], correctAnswer: 0 },
+            { id: 5, text: "Di bawah ini yang bukan merupakan manfaat dari hutan lindung adalah …..", options: ["A. Mengatur suplai air", "B. Mengendalikan erosi", "C. Mencegah banjir", "D. Diambil hasilnya"], correctAnswer: 3 },
+            { id: 6, text: "Kawasan yang memiliki ciri khas tertentu baik yang berada di daratan ataupun perairan, serta memiliki fungsi pokok sebagai kawasan untuk pengawetan keanekaragaman tumbuhan dan satwa disebut …..", options: ["A. Kawasan hutan", "B. Kawasan wisata hutan", "C. Kawasan suaka alam", "D. Kawasan konservasi"], correctAnswer: 2 },
+            { id: 7, text: "Suaka margasatwa di Ujung Kulon berfungsi untuk melindungi hewan …..", options: ["A. Banteng", "B. Gajah", "C. Badak", "D. Harimau"], correctAnswer: 2 },
+            { id: 8, text: "Suatu kawasan dengan ekosistem asli, dimanfaatkan untuk tujuan penelitian dan ilmu pengetahuan dengan pengelolaan sistem zonasi disebut …..", options: ["A. Taman nasional", "B. Taman wisata alam", "C. Taman hutan raya", "D. Taman lestari alam"], correctAnswer: 0 },
+            { id: 9, text: "Di bawah ini yang termasuk dalam bahan galian golongan A adalah …..", options: ["A. Emas", "B. Tembaga", "C. Minyak bumi", "D. Batu"], correctAnswer: 2 },
+            { id: 10, text: "Kegiatan penyelidikan dan pencarian untuk menemukan endapan bahan galian atau mineral berharga merupakan kegiatan pertambangan dalam proses …..", options: ["A. Prospeksi", "B. Eksplorasi", "C. Eksploitasi", "D. Pengolahan"], correctAnswer: 0 },
+            { id: 11, text: "Kegiatan penambangan yang meliputi aktivitas pengambilan dan pengangkutan endapan bahan galian atau mineral berharga sampai ke tempat penimbunan dan pengolahan merupakan kegiatan pertambangan dalam proses …..", options: ["A. Prospeksi", "B. Eksplorasi", "C. Eksploitasi", "D. Pengolahan"], correctAnswer: 2 },
+            { id: 12, text: "Agama islam mudah diterima oleh rakyat Indonesia, sebab …..", options: ["A. Agama islam berkembang dengan mempergunakan wayang dan gamelan", "B. Agama islam disebarluaskan tidak dengan paksaan dan kekerasan", "C. Adanya peraturan zakat dapat meringankan beban ekonomi", "D. Persyaratan masuk islam membaca 2 kalimat syahadat"], correctAnswer: 1 },
+            { id: 13, text: "Yang merupakan kesultanan Islam yang ada di Indonesia adalah …..", options: ["A. Banjarmasin", "B. Kediri", "C. Mataram", "D. Medang"], correctAnswer: 0 },
+            { id: 14, text: "Siapakah tokoh yang mendirikan kesultanan Aceh …..", options: ["A. Sultan Iskandar Thani", "B. Sultan Iskandar Muda", "C. Sultan Ali Mughayat Syah", "D. Sultan Malik al-saleh"], correctAnswer: 2 },
+            { id: 15, text: "Kesultanan Banten mencapai puncak kejayaan pada masa pemerintahan …..", options: ["A. Sultan Haji", "B. Sultan Iskandar Thani", "C. Sultan Ageng Tirtayasa", "D. Sultan Malik al-saleh"], correctAnswer: 2 },
+            { id: 16, text: "Di pulau jawa penyebaran agama islam didukung oleh para wali yang dikenal dengan ….", options: ["A. Wali hakim", "B. Wali sembilan", "C. Wali songo", "D. Wali sultan"], correctAnswer: 2 },
+            { id: 17, text: "Kerajaan Ternate dan Tidore sering disinggahi para pedagang karena …..", options: ["A. Penghasil rempah-rempah", "B. Pusat penyebaran islam", "C. Lokasinya mudah dijangkau", "D. Berhubungan erat dengan malaka"], correctAnswer: 0 },
+            { id: 18, text: "Kerajaan bercorak islam pertama di Indonesia adalah …..", options: ["A. Aceh", "B. Samudera Pasai", "C. Demak", "D. Malaka"], correctAnswer: 1 },
+            { id: 19, text: "Kegiatan menghasilkan barang atau jasa untuk memenuhi kebutuhan disebut …..", options: ["A. Konsumsi", "B. Produksi", "C. Distribusi", "D. Distributor"], correctAnswer: 1 },
+            { id: 20, text: "Hasil produksi langsung disalurkan oleh produsen kepada konsumen tanpa menggunakan perantara disebut …..", options: ["A. Distribusi langsung", "B. Distribusi tidak langsung", "C. Produsen", "D. Konsumsi"], correctAnswer: 0 },
+            { id: 21, text: "Keinginan membeli barang dan jasa disertai dengan kemampuan membeli pada waktu dan harga tertentu disebut …..", options: ["A. Penawaran", "B. Permintaan", "C. Pembelian", "D. Pengeluaran"], correctAnswer: 1 },
+            { id: 22, text: "Urutan kasta dalam masyarakat Hindu dimulai dari kasta terendah yang benar adalah …..", options: ["A. Waisya, sudra, ksatria, brahmana", "B. Sudra, waisya, ksatria, brahmana", "C. Waisya, ksatria, brahmana, sudra", "D. Brahmana, ksastria, waisya, sudra"], correctAnswer: 1 },
+            { id: 23, text: "Pak Tigor memiliki status sosial tinggi dalam masyarakat karena ia merupakan seorang Guru di SMA. Hal ini menunjukkan pelapisan sosial yang terjadi karena …..", options: ["A. Pendidikan", "B. Kekayaan", "C. Keturunan", "D. Politik"], correctAnswer: 0 },
+            { id: 24, text: "Semakin murah harga suatu barang maka permintaan barang itu akan …..", options: ["A. Berkurang", "B. Sama seperti sebelumnya", "C. Defisit", "D. Bertambah"], correctAnswer: 3 },
+            { id: 25, text: "Achieved status merupakan status yang diberikan berdasarkan …..", options: ["A. Pemberian orang lain", "B. Penerimaan orang lain", "C. Usaha orang lain", "D. Usaha dari diri sendiri"], correctAnswer: 3 },
+            { id: 26, text: "Berdasarkan data ciri-ciri wilayah: Wilayah X terletak di pesisir bersuhu tinggi dengan pakaian adat tanpa lengan, sedangkan Wilayah Z di pegunungan bersuhu rendah dengan pakaian adat berlengan panjang. Analisis terhadap faktor geografis yang memengaruhi keragaman budaya tersebut dipengaruhi oleh ...", options: ["A. Posisi strategis", "B. Luas wilayah", "C. Suhu dan kelembaban udara", "D. Jumlah penduduk"], correctAnswer: 2 },
+            { id: 27, text: "Kebudayaan sebagai suatu kekayaan bangsa memiliki unsur yang universal. Di bawah ini yang bukan termasuk bagian dari unsur-unsur kebudayaan ….", options: ["A. Pengetahuan", "B. Sistem organisasi kemasyarakatan", "C. Tempat wisata", "D. Bahasa"], correctAnswer: 2 },
+            { id: 28, text: "Sikap atau pandangan yang berpangkal pada masyarakat dan kebudayaan sendiri serta biasanya disertai dengan sikap dan pandangan yang meremehkan masyarakat dan kebudayaan lain disebut…..", options: ["A. Primordialisme", "B. Diskriminatif", "C. Etnosentrisme", "D. Stereotip"], correctAnswer: 2 },
+            { id: 29, text: "Indonesia disebut negara yang memiliki keberagaman dalam kebudayaan. Berikut cara yang tepat untuk meminimalisasi konflik akibat keberagaman budaya yang ada di Indonesia adalah…..", options: ["A. Melakukan pertentangan kepada masyarakat berbeda suku", "B. Tidak mengacuhkan norma-norma sosial", "C. Melakukan penyesuaian atau adaptasi sesuai budaya setempat", "D. Melakukan proses disosiatif di masyarakat"], correctAnswer: 2 },
+            { id: 30, text: "Ratu Kalinyamat adalah puteri ketiga dari ... ", options: ["A. Raden Toyib", "B. Sunan Prawata", "C. Sultan Trenggana", "D. Arya Penangsang"], correctAnswer: 2 },
+            { id: 31, text: "Perlawanan rakyat Maluku melawan kompeni Belanda (tentara VOC) pada tahun 1780 dilakukan di bawah pimpinan . . .", options: ["A. Tumenggung Baureksa", "B. Sultan Nuku", "C. Sultan Agung Tirtayasa", "D. Sultan Baabullah"], correctAnswer: 1 },
+            { id: 32, text: "Perhatikan tugas berikut: (1) Mengkoordinasikan sejumlah pasukan laut, (2) Mengawasi pelabuhan syahbandar, (3) Mengawasi kapal-kapal perang galley, (4) Kerjasama perdagangan lada, (5) Melakukan balas dendam armada Inong Balee. Keumalahayati menjabat sebagai laksamana dan memiliki tugas untuk ....", options: ["A. (1), (2), dan (3)", "B. (1), (2), dan (4)", "C. (1), (3), dan (5)", "D. (2), (4), dan (5)"], correctAnswer: 2 },
+            { id: 33, text: "Berdasarkan data historis luas hutan alam di Indonesia, laju deforestasi (penurunan luas hutan) yang paling tinggi dari tahun 2009 ke tahun 2013 berada pada region ....", image: "https://i.ibb.co.com/chp23cc7/Screenshot-2026-06-05-110241.png", options: ["A. Kalimantan", "B. Jawa", "C. Sumatra", "D. Papua"], correctAnswer: 0 },
+            { id: 34, text: "Terdapat tokoh-tokoh pahlawan wanita seperti R.A Kartini, Dewi Sartika, Malahayati, dan Cut Nyak Dien. Tokoh-tokoh tersebut dapat kita ambil hikmah dari perjuangannya yang relevan dengan permasalahan sosial budaya saat ini yakni terkait masalah ....", image: "https://i.ibb.co.com/PsQvwcBX/Screenshot-2026-06-05-111507.png", options: ["A. Kesetaraan gender", "B. Kesenjangan sosial dan kemiskinan", "C. Penyalahgunaan narkotika", "D. Tawuran antarpelajar"], correctAnswer: 0 },
+            { id: 35, text: "Sebelum mengenal uang, masyarakat pada zaman dulu mengenal sebuah kegiatan ekonomi yang dilakukan dengan menukar barang yang disepakati antara satu individu dan individu yang lain. Sistem ini disebut system….", options: ["A. Kredit", "B. Barter", "C. Broker", "D. Jual beli"], correctAnswer: 1 },
+            { id: 36, text: "Berikut ini yang termasuk wujud dari uang kartal yang digunakan sehari-hari adalah….", optionImages: ["https://i.ibb.co.com/RkBqpv7f/Screenshot-2026-06-05-111710.png", "https://i.ibb.co.com/j9fXdhJ7/Screenshot-2026-06-05-111731.png", "https://i.ibb.co.com/yF7MgXCf/Screenshot-2026-06-05-111720.png", "https://i.ibb.co.com/8g5JQ13G/Screenshot-2026-06-05-111745.png"], options: ["A. Lembaran Cek dan Bilyet Giro", "B. Uang Kertas dan Uang Logam", "C. Kartu Kredit dan Kartu Debit", "D. Saldo Aplikasi Dompet Digital (E-Wallet)"], correctAnswer: 1 },
+            { id: 37, text: "Perhatikan pernyataan berikut: (1) Alat penimbun kekayaan, (2) Alat pembayaran, (3) Alat tukar, (4) Alat satuan hitung. Yang tergolong fungsi asli dari uang ditunjukkan oleh pernyataan nomor . . .", options: ["A. 1 dan 2", "B. 1 dan 3", "C. 2 dan 3", "D. 3 dan 4"], correctAnswer: 3 },
+            { id: 38, text: "Ayah Gina adalah salah satu pemilik perusahaan di Jakarta. Ia sering melakukan transaksi bernominal besar untuk kliennya. Uang giral yang sebaiknya digunakan oleh Ayah Gina untuk transaksi tersebut adalah….", options: ["A. Cek atau Bilyet Giro (Pembayaran elektronik)", "B. Surat obligasi", "C. Saham", "D. Emas"], correctAnswer: 0 },
+            { id: 39, text: "Ibu Tuti membuka warung lontong di depan rumahnya. Pendapatan yang diperoleh ibu Tuti disebut….", options: ["A. Gaji", "B. Laba", "C. Sewa", "D. Bunga"], correctAnswer: 1 },
+            { id: 40, text: "Seseorang yang gemar menabung akan mendapatkan berbagai manfaat tabungan. Di antara pernyataan berikut yang BUKAN merupakan manfaat menabung adalah …..", options: ["A. Melatih gaya hidup hemat", "B. Menambah hutang", "C. Tersedianya uang untuk hal mendesak", "D. Mencapai tujuan keuangan di masa mendatang"], correctAnswer: 1 },
+            { id: 41, text: "Penyebab utama tren “Menabung Dirumah” saat ini telah banyak ditinggalkan masyarakat adalah….", options: ["A. Tidak praktis", "B. Masalah keamanan", "C. Tidak mendapat keuntungan", "D. Tidak dijamin oleh lembaga penjamin simpanan"], correctAnswer: 1 },
+            { id: 42, text: "Berikut ini yang BUKAN merupakan ciri-ciri dari tawaran investasi bodong (ilegal) adalah…", options: ["A. Tidak jelas jenis usaha yang dijalankan", "B. Mengelola utang dan piutang (Legal)", "C. Imbalan hasil investasi terlalu tinggi dengan waktu singkat", "D. Biasanya dipromosikan oleh tokoh masyarakat"], correctAnswer: 1 },
+            { id: 43, text: "Perbedaan utama dari aktivitas investasi dan tabungan terletak pada……", options: ["A. Nominal uang", "B. Bentuk uang", "C. Nilai tambah yang dimiliki (Return)", "D. Bonus yang melimpah"], correctAnswer: 2 },
+            { id: 44, text: "Pak Andi tidak mengenal perbankan sama sekali. Ia selalu menyimpan uangnya di dalam celengan bambu yang dibuat sendiri. Berdasarkan tingkat literasi keuangan, Pak Andi termasuk kelompok . . .", options: ["A. Sufficient literate", "B. Well literate", "C. Less literate", "D. Not literate"], correctAnswer: 3 },
+            { id: 45, text: "Ismi memiliki uang Rp10.000.000,00 yang akan digunakan untuk investasi instrumen reksadana. Keputusan Ismi berinvestasi di reksadana karena aman menunjukan tingkatan literasi keuangan yaitu …..", options: ["A. Sufficient literate", "B. Less literate", "C. Well literate", "D. Not literate"], correctAnswer: 2 },
+            { id: 46, text: "Serangkaian aktivitas atau proses untuk meningkatkan pengetahuan, keterampilan konsumen maupun masyarakat luas, dan kemampuan agar dapat mengelola keuangan secara lebih baik disebut...", options: ["A. Investasi", "B. Literasi keuangan", "C. Skala prioritas", "D. Kewirausahaan"], correctAnswer: 1 },
+            { id: 47, text: "Perhatikan: (1) Fahmi menyisihkan uang untuk ditabung, (2) Ita menggunakan uang saku untuk beli makan, (3) Dina menyisihkan gaji untuk bayar listrik, (4) Ari menggunakan uangnya untuk investasi bodong. Upaya pengelolaan keuangan dengan baik ditunjukkan oleh nomor….", options: ["A. 1 dan 2", "B. 1 dan 3", "C. 2 dan 3", "D. 3 dan 4"], correctAnswer: 1 },
+            { id: 48, text: "Membedakan kebutuhan dan keinginan merupakan tahapan krusial dalam langkah perencanaan keuangan, yaitu pada tahap…..", options: ["A. Menyusun tujuan keuangan", "B. Menyusun rencana pendapatan", "C. Menyusun rencana pengeluaran", "D. Melakukan review perencanaan"], correctAnswer: 2 },
+            { id: 49, text: "Tujuan keuangan yang akan dicapai pada waktu tertentu harus disusun. Tujuan keuangan jangka pendek biasanya berkisar dalam kurun waktu…..", options: ["A. 0 – 1 Tahun", "B. > 1 Tahun", "C. 1 – 5 Tahun", "D. > 5 Tahun"], correctAnswer: 0 },
+            { id: 50, text: "Perhatikan: (1) Pelatihan kewirausahaan, (2) Pelatihan daur ulang sampah ibu PKK, (3) Sosialisasi Desa Bencana, (4) Sosialisasi P3K, (5) Pelatihan desain grafis. Wujud dari pemberdayaan ekonomi komunitas ditunjukkan oleh nomor ....", options: ["A. (1), (2), dan (3)", "B. (1), (2), dan (5)", "C. (1), (3), dan (4)", "D. (2), (4), dan (5)"], correctAnswer: 1 }
+        ];
+
+        // --- KONFIGURASI ---
+        const TOTAL_QUESTIONS = QUESTIONS.length;
+        const POINTS_PER_CORRECT = 2;
+        const PENALTY_PER_CHEAT = 2;
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjhXi91Hi5xi8J7jM-6KxUE6eAOdtFRj1_-6g2KtZIjgUdK2PadDEQWAOlezDCB0DrnA/exec";
+
+        // --- STATE APLIKASI ---
+        let appState = {
+            isLoggedIn: false,
+            isSubmitted: false,
+            formData: { nama: '', jenisKelamin: '', kelas: '', token: '' },
+            currentQuestionIndex: 0,
+            answers: {}, // Format: { 0: 2, 1: 0, ... }
+            cheatCount: 0,
+            isSending: false
+        };
+
+        // --- REFERENSI DOM ---
+        const screens = {
+            login: document.getElementById('login-screen'),
+            exam: document.getElementById('exam-screen'),
+            result: document.getElementById('result-screen'),
+            modalConfirm: document.getElementById('modal-confirm'),
+            modalCheat: document.getElementById('modal-cheat')
+        };
+
+        // --- INISIALISASI ---
+        function init() {
+            // Cek localStorage untuk melanjutkan sesi
+            const savedSession = localStorage.getItem('ipsExamSessionHtml');
+            if (savedSession) {
+                const parsed = JSON.parse(savedSession);
+                if (parsed.isLoggedIn && !parsed.isSubmitted) {
+                    appState = { ...appState, ...parsed };
+                    showScreen('exam');
+                    updateHeader();
+                    renderQuestion();
+                    renderNavigation();
+                    updateCheatUI();
+                }
+            }
+        }
+
+        // --- PENYIMPANAN SESI LOKAL ---
+        function saveSession() {
+            if (appState.isLoggedIn && !appState.isSubmitted) {
+                localStorage.setItem('ipsExamSessionHtml', JSON.stringify({
+                    isLoggedIn: appState.isLoggedIn,
+                    isSubmitted: appState.isSubmitted,
+                    formData: appState.formData,
+                    answers: appState.answers,
+                    cheatCount: appState.cheatCount
+                }));
+            }
+        }
+
+        // --- FUNGSI TAMPILAN (ROUTER SEDERHANA) ---
+        function showScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.add('hidden-screen'));
+            screens[screenName].classList.remove('hidden-screen');
+            window.scrollTo(0,0);
+        }
+
+        // --- LOGIC LOGIN ---
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const token = document.getElementById('input-token').value.toUpperCase();
+            const errorDiv = document.getElementById('login-error');
+            const errorText = document.getElementById('login-error-text');
+
+            if (token !== 'IPS2026') {
+                errorText.textContent = 'Token ujian salah! Silakan minta token kepada pengawas.';
+                errorDiv.classList.remove('hidden-screen');
+                return;
+            }
+
+            errorDiv.classList.add('hidden-screen');
+            appState.formData = {
+                nama: document.getElementById('input-nama').value,
+                jenisKelamin: document.getElementById('input-jk').value,
+                kelas: document.getElementById('input-kelas').value,
+                token: token
+            };
+            appState.isLoggedIn = true;
+            saveSession();
+
+            updateHeader();
+            renderQuestion();
+            renderNavigation();
+            showScreen('exam');
+        });
+
+        function updateHeader() {
+            document.getElementById('header-student-info').textContent = `${appState.formData.nama} | Kelas ${appState.formData.kelas}`;
+        }
+
+        // --- LOGIC RENDER SOAL ---
+        function renderQuestion() {
+            const q = QUESTIONS[appState.currentQuestionIndex];
+            
+            document.getElementById('question-number').textContent = `Soal No. ${appState.currentQuestionIndex + 1}`;
+            document.getElementById('question-text').textContent = q.text;
+
+            // Render Gambar Soal
+            const imgContainer = document.getElementById('question-image-container');
+            const imgElement = document.getElementById('question-image');
+            if (q.image) {
+                imgElement.src = q.image;
+                imgContainer.classList.remove('hidden-screen');
+            } else {
+                imgContainer.classList.add('hidden-screen');
+            }
+
+            // Render Pilihan Jawaban
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = ''; // Bersihkan pilihan sebelumnya
+
+            q.options.forEach((optText, idx) => {
+                const isSelected = appState.answers[appState.currentQuestionIndex] === idx;
+                const hasImg = q.optionImages && q.optionImages[idx];
+                
+                // Styling Button Pilihan
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-start gap-3 ${isSelected ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-slate-200 hover:border-blue-300 hover:bg-slate-50'}`;
+                btn.onclick = () => selectAnswer(idx);
+
+                // Styling Radio Circle
+                const circle = document.createElement('div');
+                circle.className = `w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? 'border-blue-500' : 'border-slate-300'}`;
+                if (isSelected) {
+                    circle.innerHTML = `<div class="w-3 h-3 rounded-full bg-blue-500"></div>`;
+                }
+
+                // Styling Konten Teks/Gambar
+                const contentDiv = document.createElement('div');
+                contentDiv.className = "flex-1";
+                contentDiv.innerHTML = `<span class="text-base block ${isSelected ? 'text-blue-900 font-medium' : 'text-slate-700'}">${optText}</span>`;
+                
+                if (hasImg) {
+                    contentDiv.innerHTML += `<img src="${q.optionImages[idx]}" alt="Pilihan" class="mt-3 max-h-40 rounded-lg shadow-sm border border-slate-200 object-contain" />`;
+                }
+
+                btn.appendChild(circle);
+                btn.appendChild(contentDiv);
+                optionsContainer.appendChild(btn);
+            });
+
+            updateNavButtons();
+        }
+
+        // --- NAVIGASI BAWAH SOAL ---
+        function updateNavButtons() {
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const btnSubmit = document.getElementById('btn-submit-exam');
+
+            // Logika Tombol Previous
+            if (appState.currentQuestionIndex === 0) {
+                btnPrev.disabled = true;
+                btnPrev.className = "flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition bg-slate-200 text-slate-400 cursor-not-allowed";
+            } else {
+                btnPrev.disabled = false;
+                btnPrev.className = "flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition bg-white border shadow-sm text-slate-700 hover:bg-slate-50";
+            }
+
+            // Logika Tombol Next vs Submit
+            if (appState.currentQuestionIndex === TOTAL_QUESTIONS - 1) {
+                btnNext.classList.add('hidden-screen');
+                btnSubmit.classList.remove('hidden-screen');
+            } else {
+                btnNext.classList.remove('hidden-screen');
+                btnSubmit.classList.add('hidden-screen');
+            }
+        }
+
+        document.getElementById('btn-prev').onclick = () => {
+            if (appState.currentQuestionIndex > 0) {
+                appState.currentQuestionIndex--;
+                renderQuestion();
+                renderNavigation();
+            }
+        };
+
+        document.getElementById('btn-next').onclick = () => {
+            if (appState.currentQuestionIndex < TOTAL_QUESTIONS - 1) {
+                appState.currentQuestionIndex++;
+                renderQuestion();
+                renderNavigation();
+            }
+        };
+
+        // --- LOGIC PILIH JAWABAN ---
+        function selectAnswer(optionIndex) {
+            appState.answers[appState.currentQuestionIndex] = optionIndex;
+            saveSession();
+            renderQuestion(); // Render ulang soal saat ini untuk efek klik
+            renderNavigation(); // Render ulang grid nomor soal
+        }
+
+        // --- LOGIC GRID NAVIGASI (KANAN) ---
+        function renderNavigation() {
+            const grid = document.getElementById('grid-navigation');
+            grid.innerHTML = ''; // Bersihkan
+
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                const isAnswered = appState.answers[i] !== undefined;
+                const isCurrent = appState.currentQuestionIndex === i;
+
+                const btn = document.createElement('button');
+                btn.textContent = i + 1;
+                btn.className = `w-full aspect-square flex items-center justify-center rounded-lg font-semibold text-sm transition-all `;
+                
+                if (isCurrent) btn.className += "ring-2 ring-offset-2 ring-blue-500 scale-105 ";
+                if (isAnswered) {
+                    btn.className += "bg-blue-600 text-white shadow-sm";
+                } else {
+                    btn.className += "bg-white border border-slate-300 text-slate-600 hover:bg-slate-100";
+                }
+
+                btn.onclick = () => {
+                    appState.currentQuestionIndex = i;
+                    renderQuestion();
+                    renderNavigation();
+                };
+
+                grid.appendChild(btn);
+            }
+        }
+
+        // --- SISTEM ANTI CURANG ---
+        function handleCheatDetection() {
+            if (appState.isLoggedIn && !appState.isSubmitted) {
+                appState.cheatCount++;
+                saveSession();
+                updateCheatUI();
+                
+                // Tampilkan Modal Peringatan
+                document.getElementById('modal-cheat-count-text').textContent = `Total Pelanggaran: ${appState.cheatCount} kali (-${appState.cheatCount * PENALTY_PER_CHEAT} Poin)`;
+                screens.modalCheat.classList.remove('hidden-screen');
+            }
+        }
+
+        function updateCheatUI() {
+            const indicator = document.getElementById('cheat-indicator');
+            if (appState.cheatCount > 0) {
+                indicator.classList.remove('hidden-screen');
+                document.getElementById('cheat-count-text').textContent = `Kecurangan: ${appState.cheatCount}`;
+            }
+        }
+
+        document.getElementById('btn-understand-cheat').onclick = () => {
+            screens.modalCheat.classList.add('hidden-screen');
+        };
+
+        // Event listener pindah tab
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) handleCheatDetection();
+        });
+        window.addEventListener('blur', () => {
+            handleCheatDetection();
+        });
+
+        // --- LOGIC PENGIRIMAN JAWABAN ---
+        function calculateScore() {
+            let correct = 0;
+            QUESTIONS.forEach((q, index) => {
+                if (appState.answers[index] === q.correctAnswer) correct++;
+            });
+            const grossScore = correct * POINTS_PER_CORRECT;
+            const penalty = appState.cheatCount * PENALTY_PER_CHEAT;
+            const finalScore = Math.max(0, grossScore - penalty);
+            return { correct, penalty, finalScore };
+        }
+
+        function showConfirmSubmitModal() {
+            const answeredCount = Object.keys(appState.answers).length;
+            const msg = answeredCount < TOTAL_QUESTIONS 
+                ? `Anda baru menjawab ${answeredCount} dari ${TOTAL_QUESTIONS} soal. Yakin ingin mengumpulkan sekarang?` 
+                : "Apakah Anda yakin ingin mengakhiri ujian dan mengirim jawaban?";
+            
+            document.getElementById('modal-confirm-text').textContent = msg;
+            screens.modalConfirm.classList.remove('hidden-screen');
+        }
+
+        document.getElementById('btn-submit-exam').onclick = showConfirmSubmitModal;
+        document.getElementById('btn-finish-all').onclick = showConfirmSubmitModal;
+        
+        document.getElementById('btn-cancel-submit').onclick = () => {
+            screens.modalConfirm.classList.add('hidden-screen');
+        };
+
+        document.getElementById('btn-execute-submit').onclick = async () => {
+            screens.modalConfirm.classList.add('hidden-screen');
+            
+            // Set status Loading
+            appState.isSending = true;
+            document.getElementById('btn-submit-text').textContent = "Mengirim...";
+            document.getElementById('btn-finish-all').textContent = "Memproses...";
+            document.getElementById('btn-finish-all').disabled = true;
+            document.getElementById('submit-error').classList.add('hidden-screen');
+
+            const { correct, finalScore } = calculateScore();
+            const payload = {
+                nama: appState.formData.nama,
+                jenisKelamin: appState.formData.formData,
+                kelas: appState.formData.kelas,
+                token: appState.formData.token,
+                jumlahBenar: correct,
+                jumlahKecurangan: appState.cheatCount,
+                skorAkhir: finalScore,
+                jawaban: appState.answers
+            };
+
+            try {
+                // Mengirim ke Google Sheet
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                // Selesai sukses
+                appState.isSending = false;
+                appState.isSubmitted = true;
+                localStorage.removeItem('ipsExamSessionHtml'); // Hapus memori ujian agar tidak bisa diulang
+                showResultScreen(correct, finalScore, appState.cheatCount * PENALTY_PER_CHEAT);
+                
+            } catch (error) {
+                appState.isSending = false;
+                document.getElementById('btn-submit-text').textContent = "Kirim Jawaban";
+                document.getElementById('btn-finish-all').textContent = "Selesai & Kirim";
+                document.getElementById('btn-finish-all').disabled = false;
+                
+                const errEl = document.getElementById('submit-error');
+                errEl.textContent = "Terjadi kesalahan pengiriman. Pastikan internet stabil.";
+                errEl.classList.remove('hidden-screen');
+            }
+        };
+
+        function showResultScreen(correct, finalScore, penaltyScore) {
+            document.getElementById('res-nama').textContent = appState.formData.nama;
+            document.getElementById('res-total').textContent = TOTAL_QUESTIONS;
+            document.getElementById('res-benar').textContent = `${correct} (+${correct * POINTS_PER_CORRECT} poin)`;
+            document.getElementById('res-curang').textContent = `${appState.cheatCount} (-${penaltyScore} poin)`;
+            document.getElementById('res-skor').textContent = `${finalScore} / 100`;
+            showScreen('result');
+        }
+
+        // --- JALANKAN SAAT PERTAMA KALI DIBUKA ---
+        init();
+    </script>
+</body>
+</html>
